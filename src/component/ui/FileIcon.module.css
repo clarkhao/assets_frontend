@@ -1,0 +1,26 @@
+.container {
+  width: var(--file-icon-size);
+  position: relative;
+}
+.container>svg {
+  width: var(--file-icon-size);
+  height: auto;
+  fill: var(--file-icon-color);
+  color: var(--file-icon-color);
+  stroke-width: 1px;
+}
+.container>svg polyline {
+  fill: white;
+  stroke-width: 0px;
+}
+.container>.type {
+  position: absolute;
+  color: white;
+  width: calc(var(--file-icon-size)/2);
+  height: calc(var(--file-icon-size)/3);
+  line-height: calc(var(--file-icon-size)/3);
+  text-align: center;
+  inset: 0;
+  margin: auto;
+  font-size: calc(var(--file-icon-size)/3);
+}
