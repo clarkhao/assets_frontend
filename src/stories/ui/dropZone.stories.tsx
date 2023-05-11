@@ -1,20 +1,20 @@
-import React from "react";
-import { ComponentStory, ComponentMeta } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react";
+import { getByRole, userEvent, within } from "@storybook/testing-library";
 import DropZone from "../../component/ui/DropZoneUI";
-import SvgIcon from "@mui/material/SvgIcon";
-import { iconLibrary } from "../../component/utils";
 
-export default {
+const meta: Meta<typeof DropZone> = {
   title: "UI/DropZone",
   component: DropZone,
-} as ComponentMeta<typeof DropZone>;
+  tags: ["autodocs"],
+};
 
-const Template: ComponentStory<typeof DropZone> = (args) => (
-  <DropZone {...args} />
-);
+export default meta;
+type Story = StoryObj<typeof DropZone>;
 
-export const DropZoneStory = Template.bind({});
-DropZoneStory.args = {
-  height: "300px",
-  handleAddFiles: (data) => {},
+export const Primary: Story = {
+  args: {},
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    
+  },
 };

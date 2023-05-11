@@ -1,18 +1,20 @@
-import React from 'react';
-import { ComponentStory, ComponentMeta } from '@storybook/react';
-import { within, userEvent } from '@storybook/testing-library';
-import Uploader from '../../component/composite/assets/Uploader';
+import type { Meta, StoryObj } from "@storybook/react";
+import { getByRole, userEvent, within } from "@storybook/testing-library";
+import Uploader from "../../component/composite/assets/Uploader";
 
-export default {
-    title: 'Composite/Uploader',
-    component: Uploader,
-    
-} as ComponentMeta<typeof Uploader>;
+const meta: Meta<typeof Uploader> = {
+  title: "Composite/Uploader",
+  component: Uploader,
+  tags: ["autodocs"],
+};
 
-const Template: ComponentStory<typeof Uploader> = (args) => <Uploader {...args} />;
+export default meta;
+type Story = StoryObj<typeof Uploader>;
 
-export const AssetsUpload = Template.bind({});
-AssetsUpload.args = {}
-AssetsUpload.play = async ({ canvasElement }) => {
+export const Primary: Story = {
+  args: {},
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-}
+    
+  },
+};

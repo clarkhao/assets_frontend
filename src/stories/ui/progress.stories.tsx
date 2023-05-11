@@ -1,17 +1,20 @@
-import React from 'react';
-import { ComponentStory, ComponentMeta } from '@storybook/react';
-import { within, userEvent } from '@storybook/testing-library';
-import Progress from '../../component/ui/ProgressUI';
+import type { Meta, StoryObj } from "@storybook/react";
+import { getByRole, userEvent, within } from "@storybook/testing-library";
+import Progress from "../../component/ui/ProgressUI";
 
-export default {
-    title: 'UI/Progress',
-    component: Progress,
-} as ComponentMeta<typeof Progress>;
+const meta: Meta<typeof Progress> = {
+  title: "UI/Progress",
+  component: Progress,
+  tags: ["autodocs"],
+};
 
-const Template: ComponentStory<typeof Progress> = (args) => <Progress {...args} />;
+export default meta;
+type Story = StoryObj<typeof Progress>;
 
-export const ProgressStory = Template.bind({});
-ProgressStory.args = {value: 0, text: 'uploading...'};
-ProgressStory.play = async ({ canvasElement }) => {
+export const Primary: Story = {
+  args: {},
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-}
+    
+  },
+};

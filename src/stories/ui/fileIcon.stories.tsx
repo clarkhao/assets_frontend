@@ -1,17 +1,20 @@
-import React from 'react';
-import { ComponentStory, ComponentMeta } from '@storybook/react';
-import { within, userEvent } from '@storybook/testing-library';
-import FileIcon from '../../component/ui/FileIcon';
+import type { Meta, StoryObj } from "@storybook/react";
+import { getByRole, userEvent, within } from "@storybook/testing-library";
+import FileIcon from "../../component/ui/FileIcon";
 
-export default {
-    title: 'UI/FileIcon',
-    component: FileIcon,
-} as ComponentMeta<typeof FileIcon>;
+const meta: Meta<typeof FileIcon> = {
+  title: "UI/FileIcon",
+  component: FileIcon,
+  tags: ["autodocs"],
+};
 
-const Template: ComponentStory<typeof FileIcon> = (args) => <FileIcon {...args} />;
+export default meta;
+type Story = StoryObj<typeof FileIcon>;
 
-export const FileIconStory = Template.bind({});
-FileIconStory.args = {};
-FileIconStory.play = async ({ canvasElement }) => {
+export const Primary: Story = {
+  args: {},
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-}
+    
+  },
+};

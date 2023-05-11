@@ -1,17 +1,20 @@
-import React from 'react';
-import { ComponentStory, ComponentMeta } from '@storybook/react';
-import { within, userEvent } from '@storybook/testing-library';
-import Check from '../../component/ui/Check';
+import type { Meta, StoryObj } from "@storybook/react";
+import { getByRole, userEvent, within } from "@storybook/testing-library";
+import Check from "../../component/ui/Check";
 
-export default {
-    title: 'UI/Check',
-    component: Check,
-} as ComponentMeta<typeof Check>;
+const meta: Meta<typeof Check> = {
+  title: "UI/Check",
+  component: Check,
+  tags: ["autodocs"],
+};
 
-const Template: ComponentStory<typeof Check> = (args) => <Check {...args} />;
+export default meta;
+type Story = StoryObj<typeof Check>;
 
-export const CheckStory = Template.bind({});
-CheckStory.args = {};
-CheckStory.play = async ({ canvasElement }) => {
+export const Primary: Story = {
+  args: {},
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-}
+    
+  },
+};

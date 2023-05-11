@@ -1,17 +1,20 @@
-import React from 'react';
-import { ComponentStory, ComponentMeta } from '@storybook/react';
-import { within, userEvent } from '@storybook/testing-library';
-import List from '../../component/ui/ListUI';
+import type { Meta, StoryObj } from "@storybook/react";
+import { getByRole, userEvent, within } from "@storybook/testing-library";
+import List from "../../component/ui/ListUI";
 
-export default {
-    title: 'UI/List',
-    component: List,
-} as ComponentMeta<typeof List>;
+const meta: Meta<typeof List> = {
+  title: "UI/List",
+  component: List,
+  tags: ["autodocs"],
+};
 
-const Template: ComponentStory<typeof List> = (args) => <List {...args} />;
+export default meta;
+type Story = StoryObj<typeof List>;
 
-export const ListStory = Template.bind({});
-ListStory.args = {};
-ListStory.play = async ({ canvasElement }) => {
+export const Primary: Story = {
+  args: {},
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-}
+    
+  },
+};
