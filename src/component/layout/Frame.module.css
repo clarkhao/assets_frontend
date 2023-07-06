@@ -1,0 +1,17 @@
+.frame {
+  position: relative;
+}
+.original {
+  opacity: 0;
+  transform: rotate3d(0,1,0, 1.57rad);
+}
+.page {
+  opacity: 1;
+  transform: rotate3d(0,0,0,0);
+  transition: all 500ms;
+}
+.exit {
+  opacity: 0;
+  transform: translateX(100%);
+  transition: all 500ms;
+}

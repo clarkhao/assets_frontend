@@ -2,6 +2,7 @@ import type { Preview } from "@storybook/react";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { lightTheme, darkTheme } from "../src/component/utils";
 import React from "react";
+import '../src/style/index.css';
 
 export const globalTypes = {
   theme: {

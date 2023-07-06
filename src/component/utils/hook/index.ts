@@ -1,33 +1,37 @@
 import React from "react";
-import { toast } from "react-toastify";
-import { boolean } from "zod";
 /**
  * 定义upload中useReducer()的准备工作
+ * 上传3个阶段：success-S, fail-F
+ * 检查, start
+ * 1，获取presigned url, F->放弃, S->继续
+ * 2, 上传到aws，F->重试，S->继续
+ * 3, 写数据到db，F->后端协调，S->finish
  */
-import { FileListType, FileNameListType, FileErrMsgType } from "../type";
+import { TFileListType, TFileErrMsgType, Statcis } from "../type";
 type UploadState = {
-  fileList: Array<FileListType>;
-  fileNameList: Array<FileNameListType>;
-  progress: Array<number>;
-  error: FileErrMsgType;
-  start: boolean;
+  fileList: Array<TFileListType> | null;
+  fileNameMap: Record<string, string> | null;
+  presigned: Array<string>;
+  start: boolean | null;
+  statics: Statcis;
+  error: TFileErrMsgType | null;
   toastId: number;
 };
 type UploadPayload = {
-  "add-file": {
+  "init-upload": {
     files: UploadState["fileList"];
-    names: UploadState["fileNameList"];
+    names: UploadState["fileNameMap"];
   };
-  "reset-file": {
-    files: UploadState["fileList"];
-    names: UploadState["fileNameList"];
-    nums: Array<number>;
-  };
-  "reset-upload": boolean;
-  progress: {
-    num: number;
-    index: number;
-  };
+  "reset-all": null;
+  "set-start": boolean;
+  //index
+  "set-presigned": Array<string>;
+  "upload-progress": { index: number; progress: number };
+  "complete-aws": { index: number; status: boolean };
+  "delete-file": { index: number };
+  "set-statics": { data: Statcis };
+  "set-db": { status: boolean };
+
   "change-error": UploadState["error"];
   "toast-id": number;
 };
@@ -37,35 +41,121 @@ interface IUploadAction {
 }
 export const uploadReducer = (state: UploadState, action: IUploadAction) => {
   switch (action.type) {
-    case "add-file":
+    case "init-upload":
       return {
         ...state,
-        fileList: [...(action.payload as UploadPayload["add-file"]).files],
-        fileNameList: [...(action.payload as UploadPayload["add-file"]).names],
+        fileList: [
+          ...((action.payload as UploadPayload["init-upload"])
+            .files as Array<TFileListType>),
+        ],
+        fileNameMap: {
+          ...(action.payload as UploadPayload["init-upload"]).names,
+        },
         start: true,
       };
-    case "reset-file":
+    case "reset-all":
       return {
         ...state,
-        fileList: [...(action.payload as UploadPayload["reset-file"]).files],
-        fileNameList: [...(action.payload as UploadPayload["reset-file"]).names],
-        start: false,
-        progress: [...(action.payload as UploadPayload["reset-file"]).nums]
+        fileList: [] as Array<TFileListType>,
+        fileNameMap: {} as Record<string, string>,
+        start: null,
+        statics: {
+          uploaded:
+            sessionStorage.getItem("statics") === null
+              ? 0
+              : parseInt(
+                  JSON.parse(sessionStorage.getItem("statics")!).uploaded
+                ),
+          limit:
+            sessionStorage.getItem("statics") === null
+              ? 0
+              : parseInt(JSON.parse(sessionStorage.getItem("statics")!).limit),
+        },
+
       };
-    case "reset-upload": 
+    case "set-start":
       return {
         ...state,
-        start: (action.payload as UploadPayload['reset-upload'])
-      }
-    case "progress":
+        start: action.payload as UploadState["start"],
+      };
+    case "set-presigned":
       return {
         ...state,
-        progress: [...state.progress].map((el, i) => {
-          if(i === (action.payload as UploadPayload["progress"]).index)
-            return (action.payload as UploadPayload["progress"]).num;
-          else
-            return el;
-        })
+        presigned: action.payload as UploadPayload["set-presigned"],
+      };
+    case "upload-progress":
+      return {
+        ...state,
+        fileList: state.fileList?.map((value, index) => {
+          if (
+            index ===
+            (action.payload as UploadPayload["upload-progress"])["index"]
+          ) {
+            return {
+              ...value,
+              progress: (action.payload as UploadPayload["upload-progress"])[
+                "progress"
+              ],
+            };
+          }
+          return value;
+        }) as Array<TFileListType>,
+      };
+    case "complete-aws":
+      return {
+        ...state,
+        fileList: state.fileList?.map((value, index) => {
+          if (
+            index === (action.payload as UploadPayload["complete-aws"])["index"]
+          ) {
+            return {
+              ...value,
+              status: {
+                ...value.status,
+                upload: (action.payload as UploadPayload["complete-aws"])[
+                  "status"
+                ]
+                  ? "S"
+                  : "F",
+              },
+            };
+          }
+          return value;
+        }) as Array<TFileListType>,
+      };
+    case "delete-file":
+      return {
+        ...state,
+        fileList: state.fileList?.filter((value, index) => {
+          return (
+            index !== (action.payload as UploadPayload["delete-file"])["index"]
+          );
+        }) as TFileListType[],
+        presigned: state.presigned.filter((value, index) => {
+          return (
+            index !== (action.payload as UploadPayload["delete-file"])["index"]
+          );
+        }) as Array<string>,
+      };
+    case "set-statics":
+      return {
+        ...state,
+        statics: (action.payload as UploadPayload["set-statics"])["data"],
+      };
+    case "set-db":
+      return {
+        ...state,
+        fileList: state.fileList?.map((value) => {
+          return {
+            ...value,
+            status: {
+              ...value.status,
+              write: (action.payload as UploadPayload["set-db"])["status"]
+                ? "S"
+                : "F",
+            },
+          };
+        }) as Array<TFileListType>,
       };
     case "change-error":
       return {
@@ -80,10 +170,20 @@ export const uploadReducer = (state: UploadState, action: IUploadAction) => {
 };
 export const initialUploadState: UploadState = {
   fileList: [],
-  fileNameList: [],
-  progress: [],
+  fileNameMap: {},
+  presigned: [],
+  start: null,
+  statics: {
+    uploaded:
+      sessionStorage.getItem("statics") === null
+        ? 0
+        : parseInt(JSON.parse(sessionStorage.getItem("statics")!).uploaded),
+    limit:
+      sessionStorage.getItem("statics") === null
+        ? 0
+        : parseInt(JSON.parse(sessionStorage.getItem("statics")!).limit),
+  },
   error: { name: "", msg: [] },
-  start: false,
   toastId: 0,
 };
 export const useUploader = () => {
@@ -91,5 +191,11 @@ export const useUploader = () => {
   React.useEffect(() => {
     dispatch({ type: "change-error", payload: { name: "", msg: [] } });
   }, [state.toastId]);
+
   return { state, dispatch };
 };
+
+export const UploadContext = React.createContext<{
+  state: UploadState;
+  dispatch: React.Dispatch<IUploadAction>;
+} | null>(null);

@@ -1,3 +1,4 @@
+
 import { createTheme } from "@mui/material/styles";
 /** 
 * default theme
@@ -36,6 +37,9 @@ export const darkTheme = createTheme({
     }
   },
 });
+export const generateTheme = (mode: 'light' | 'dark') => {
+  return mode === 'light' ? lightTheme : darkTheme;
+}
 /**
 * define more custom theme with custom settings inside
 */

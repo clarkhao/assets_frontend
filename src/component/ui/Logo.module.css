@@ -1,0 +1,24 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
+}
+.container:hover {
+  cursor: pointer;
+}
+.container svg {
+  width: var(--icon-size);
+  height: var(--icon-size);
+  color: brown;
+  fill: white;
+  animation: rotate .5s ease var(--animation-count) forwards;
+}
+@keyframes rotate {
+  from {
+    transform: rotate(var(--rotate-start));
+  }
+  to {
+    transform: rotate(var(--rotate-end));
+  }
+}

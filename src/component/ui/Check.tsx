@@ -1,6 +1,5 @@
 //应用
 import React from "react";
-import { FileNameListType } from "../utils/type";
 //style
 import style from "./Check.module.css";
 import { iconLibrary } from "../utils";

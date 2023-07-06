@@ -1,0 +1,46 @@
+.button {
+  width: 60px;
+  height: 60px;
+  background-color: brown;
+  color: white;
+  cursor: pointer;
+  position: relative;
+  border-radius: 40px;
+  overflow: hidden;
+  transition: width .1s ease;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  z-index: 11;
+}
+.button svg {
+  font-size: 40px;
+  margin-left: 10px;
+}
+.button:hover {
+  width: 160px;
+}
+.button:hover::after {
+  content: "";
+  font-size: 20px;
+  margin-left: 10px;
+  animation: morecontent .1s ease-in-out forwards;
+}
+@keyframes morecontent {
+  0% {
+    content: "";
+  }
+  25% {
+    content: "添";
+  }
+  50% {
+    content: "添加";
+  }
+  75% {
+    content: "添加图";
+  }
+  100% {
+    content: "添加图片";
+  }
+}
+

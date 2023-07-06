@@ -1,25 +1,32 @@
 //应用
 import React from "react";
-import { FileNameListType } from "../utils/type";
+import axios, { AxiosProgressEvent } from "axios";
 //style
 import style from "./ListUI.module.css";
-import { iconLibrary } from "../utils";
 import { useTheme } from "@mui/material/styles";
 import { css } from "@emotion/react";
 //组件
 import Progress from "./ProgressUI";
 import FileIcon from "./FileIcon";
 import Check from "./Check";
+//hooks
+import { useStore } from "../../store";
+
+type TFileList = {
+  id: string;
+  status: { upload: string; write: string };
+  progress: number;
+};
 
 export type ListType = {
   /**
    * list that is used to render
    */
-  list: Array<FileNameListType>;
+  list: Array<TFileList>;
   /**
-   * progress
+   * nameMap
    */
-  progress: Array<number>;
+  nameMap: Record<string, string>;
   /**
    * optional left icon
    */
@@ -32,28 +39,33 @@ export type ListType = {
 
 function List({ list, lIcon = true, rIcon = true, ...props }: ListType) {
   const theme = useTheme();
+  const themeMode = useStore((state) => state.themeMode);
   return (
     <>
       <ul
-        className={style.container}
+        className={[style.container, `${themeMode}-container`].join(" ")}
         css={css`
-          background-color: ${theme.palette.primary.main};
+          background-color: ${theme.palette.mode === "dark"
+            ? theme.palette.grey[900]
+            : theme.palette.grey[100]};
         `}
       >
-        {(
-          list ?? [
-            { id: "a", name: "a.jpg", progress: 12 },
-            { id: "b", name: "b.svg", progress: 100 },
-            { id: "c", name: "c.pdf", progress: 89 },
-          ]
-        ).map((el,i) => {
+        {list.map((el, i) => {
+          const name = props.nameMap[el.id];
+          const progress =
+            el.status.write !== "S"
+              ? el.progress !== 100
+                ? el.progress
+                : 99
+              : 100;
+
           return (
-            <li key={el.id.split('.')[0]}>
+            <li key={name.split(".")[0]}>
               {lIcon ? (
-                <FileIcon size={50} type={el.name.split(".").reverse()[0]} />
+                <FileIcon size={50} type={name.split(".").reverse()[0]} />
               ) : null}
-              <Progress value={props.progress[i]} text={el.name} />
-              {rIcon ? <Check bingo={props.progress[i] >= 100} /> : null}
+              <Progress value={progress} text={name} />
+              {rIcon ? <Check bingo={el.status.write === "S"} /> : null}
             </li>
           );
         })}

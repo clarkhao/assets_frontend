@@ -1,0 +1,10 @@
+.avatarList {
+  width: 325px;
+  height: 310px;
+  overflow: auto;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  border: 1px red dashed;
+  border-radius: 10px;
+}

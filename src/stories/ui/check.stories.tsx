@@ -6,6 +6,9 @@ const meta: Meta<typeof Check> = {
   title: "UI/Check",
   component: Check,
   tags: ["autodocs"],
+  parameters: {
+    layout: 'centered'
+  }
 };
 
 export default meta;

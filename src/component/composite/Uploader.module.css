@@ -1,0 +1,36 @@
+.container {
+  background-color: var(--upload-background-color);
+  opacity: 0.95;
+  width: 50%;
+  min-height: 500px;
+  max-height: calc(100vh - 140px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  box-shadow: var(--upload-shadow);
+  transition: all 0.5s;
+  position: absolute;
+  top: 120px;
+}
+@media screen and (max-width: 850px) {
+  .container {
+      width: 95%;
+  }
+}
+.title {
+  height: 60px;
+  color: var(--upload-font-color);
+}
+.title {
+  text-align: center;
+  position:relative;
+  width: 100%;
+}
+.title h1 {
+  position: absolute;
+  top: 0; bottom: 0; left: 0; right: 0;
+  margin: auto;
+  line-height: 24px;
+  height: 24px;
+}

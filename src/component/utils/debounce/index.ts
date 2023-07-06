@@ -1,5 +1,5 @@
+//every time you disturb, I will stop it, 防抖
 let debounceTimer: number;
- 
 const debounce = (callback: () => void, time: number) => {
   clearTimeout(debounceTimer);
   console.log(debounceTimer);
@@ -7,13 +7,14 @@ const debounce = (callback: () => void, time: number) => {
   console.log(debounceTimer);
 };
 
-let throttleTimer: boolean;
- 
+//any following nonstop disturb won't stop my first trigger， 节流
+let throttleTimer: boolean = false;
 const throttle = (callback: () => void, time: number) => {
     if (throttleTimer) return;
     throttleTimer = true;
+    callback();
     setTimeout(() => {
-        callback();
+        //
         throttleTimer = false;
     }, time);
 }

@@ -6,6 +6,7 @@ const meta: Meta<typeof DropZone> = {
   title: "UI/DropZone",
   component: DropZone,
   tags: ["autodocs"],
+  
 };
 
 export default meta;

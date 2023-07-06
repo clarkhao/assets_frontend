@@ -1,0 +1,16 @@
+.container {
+  width: 100%;
+  min-width: 500px;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: url("../upload_bg.png");
+  background-repeat: repeat;
+  background-size: 50%;
+  margin-top: 0px;
+  position: relative;
+}
+.dark {
+  filter: grayscale(70%);
+}

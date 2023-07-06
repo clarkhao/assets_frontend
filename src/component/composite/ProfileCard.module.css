@@ -1,0 +1,20 @@
+.container {
+  max-width: 500px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+.main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  row-gap: 10px;
+}
+.name h3, .name p, .email p {
+  margin: 0 auto;
+}
+.name p {
+  font-size: 20px;
+}

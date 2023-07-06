@@ -2,7 +2,7 @@
   width: 100%;
   max-width: 500px;
   height: 100%;
-  max-height: 300px;
+  max-height: 360px;
   background-color: var(--droparea-bg-color);
   display: flex;
   flex-direction: column;
@@ -15,7 +15,7 @@
 }
 .droparea {
   width: 200px;
-  height: 200px;
+  height: 400px;
   min-height: 200px;
   display: flex;
   justify-content: center;
@@ -28,11 +28,12 @@
   display: none;
 }
 .before {
-  height: 100%;
   text-align: center;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: start;
+  align-items: center;
+  row-gap: 0;
 }
 .error{
   height: 15%;
