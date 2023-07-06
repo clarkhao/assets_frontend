@@ -6,6 +6,9 @@ const meta: Meta<typeof FileIcon> = {
   title: "UI/FileIcon",
   component: FileIcon,
   tags: ["autodocs"],
+  parameters: {
+    layout: 'centered'
+  }
 };
 
 export default meta;

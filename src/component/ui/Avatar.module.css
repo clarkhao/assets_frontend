@@ -1,0 +1,13 @@
+.container div {
+  width: var(--avatar-icon-size);
+  height: var(--avatar-icon-size);
+  background-image: var(--avatar-icon-image);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: var(--avatar-icon-size);
+  border-radius: 50%;
+  position: relative;
+}
+.container:focus {
+  outline: transparent;
+}

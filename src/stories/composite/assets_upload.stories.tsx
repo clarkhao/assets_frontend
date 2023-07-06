@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { getByRole, userEvent, within } from "@storybook/testing-library";
-import Uploader from "../../component/composite/assets/Uploader";
+import Uploader from "../../component/composite/Uploader";
 
 const meta: Meta<typeof Uploader> = {
   title: "Composite/Uploader",
@@ -9,7 +9,7 @@ const meta: Meta<typeof Uploader> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof Uploader>;
+type Story = StoryObj<typeof meta>;
 
 export const Primary: Story = {
   args: {},

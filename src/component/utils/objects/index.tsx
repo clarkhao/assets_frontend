@@ -6,10 +6,10 @@ import {
   FiTrash2,
   FiSearch,
   FiEye,
-  FiEyeOff
+  FiEyeOff,
 } from "react-icons/fi";
 import { MdMoveToInbox } from "react-icons/md";
-import {FaGithub,FaGoogle} from 'react-icons/fa'
+import { FaGithub, FaGoogle } from "react-icons/fa";
 import { Fragment } from "react";
 
 export const iconLibrary: Map<string, JSX.Element> = new Map([
@@ -80,3 +80,4 @@ export const iconLibrary: Map<string, JSX.Element> = new Map([
     </Fragment>,
   ],
 ]);
+

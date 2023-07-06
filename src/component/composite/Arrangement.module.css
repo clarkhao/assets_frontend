@@ -1,0 +1,12 @@
+.container {
+  padding: 8px;
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto 0;
+  padding-top: var(--padding-top);
+  box-sizing: border-box;
+  overflow-y: hidden;
+}
+.container, .container div {
+  overflow-x: hidden;
+}

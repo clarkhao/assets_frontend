@@ -6,13 +6,14 @@ const meta: Meta<typeof Progress> = {
   title: "UI/Progress",
   component: Progress,
   tags: ["autodocs"],
+
 };
 
 export default meta;
 type Story = StoryObj<typeof Progress>;
 
 export const Primary: Story = {
-  args: {},
+  args: {value: 88, text: 'some'},
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     

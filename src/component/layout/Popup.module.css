@@ -1,0 +1,36 @@
+.popup {
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+  border: 2px black solid;
+  padding: 10px;
+  border-radius: 10px;
+  position: relative;
+}
+.popup_btn {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  column-gap: 10px;
+}
+.popup svg {
+  width: 30px;
+  height: auto;
+  position: absolute;
+  top: -15px;
+  right: -15px;
+  fill: white;
+  cursor: pointer;
+}
+.disappear {
+  animation: disappear .3s ease-in-out forwards;
+}
+@keyframes disappear {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(0);
+  }
+}

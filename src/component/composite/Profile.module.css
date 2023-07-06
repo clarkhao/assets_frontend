@@ -1,0 +1,26 @@
+.profileCard {
+  min-height: 100vh;
+  margin-top: 80px;
+  padding-top: 20px;
+}
+.top {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+.followers {
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
+}
+.followers button:focus {
+  outline: transparent;
+}
+
+.delete {
+  position: absolute;
+  left: calc(50% - 40px);
+  bottom: 20px;
+}

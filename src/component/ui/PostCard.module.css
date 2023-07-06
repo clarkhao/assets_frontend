@@ -1,0 +1,50 @@
+.image {
+  min-height: 250px;
+  cursor: pointer;
+}
+.footer {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+.avarta {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  column-gap: 5px;
+}
+.footer svg {
+  width: 25px;
+  height: auto;
+}
+.like {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  column-gap: 5px;
+}
+.post {
+  position: relative;
+}
+.img {
+  cursor: pointer;
+}
+.checkbox {
+  visibility: hidden;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 35px;
+  height: 35px;
+  transition: all 300ms;
+}
+.post:hover>.checkbox{
+  visibility: visible;
+}
+.checkbox:checked {
+  visibility: visible;
+}

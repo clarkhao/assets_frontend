@@ -1,0 +1,28 @@
+.container {
+  max-width: 300px;
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: start;
+  cursor: pointer;
+}
+.container svg {
+  width: 60px;
+  height: auto;
+}
+.icon {
+  width: var(--follower-icon-size);
+  height: var(--follower-icon-size);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.icon div {
+  font-size: calc(var(--follower-icon-size)/3);
+  
+}
+.icon p {
+  font-size: calc(var(--follower-icon-size)/8);
+  font-weight: 300;
+}
