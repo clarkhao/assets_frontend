@@ -7,7 +7,7 @@
   cursor: pointer;
 }
 .container svg {
-  width: 60px;
+  width: var(--follower-icon-size);
   height: auto;
 }
 .icon {
@@ -25,4 +25,12 @@
 .icon p {
   font-size: calc(var(--follower-icon-size)/8);
   font-weight: 300;
+}
+.column {
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.column .icon {
+  flex-direction: row;
 }

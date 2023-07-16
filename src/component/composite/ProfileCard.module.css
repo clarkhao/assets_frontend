@@ -8,13 +8,12 @@
 .main {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: start;
   align-items: flex-start;
-  row-gap: 10px;
 }
 .name h3, .name p, .email p {
   margin: 0 auto;
 }
-.name p {
-  font-size: 20px;
+.main p {
+  font-size: var(--avatar-font-size);
 }

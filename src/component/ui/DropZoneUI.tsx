@@ -29,6 +29,10 @@ export type DropZoneType = {
    * upload statics
    */
   statics: Statcis;
+  /**
+   * i18n content
+   */
+  i18n: Record<string, string>;
 };
 
 function DropZone({ handleAddFiles, ...props }: DropZoneType) {
@@ -131,9 +135,9 @@ function DropZone({ handleAddFiles, ...props }: DropZoneType) {
         />
       </label>
       <div className={style.before}>
-        <p>{`Limit: ${props.statics.limit} and Uploaded: ${props.statics.uploaded}`}</p>
-        <p>Drag & Drop your files here</p>
-        <p>or Click above Icon to select files</p>
+        <p>{`${props.i18n.limit}: ${props.statics.limit}, ${props.i18n.uploaded}: ${props.statics.uploaded}`}</p>
+        <p>{props.i18n.first}</p>
+        <p>{props.i18n.second}</p>
       </div>
     </div>
   );

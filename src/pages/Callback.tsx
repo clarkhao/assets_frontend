@@ -13,29 +13,30 @@ import ErrorBoundary from "../component/ui/ErrorBoundary";
 //组件
 import Spin from "../component/ui/Spin";
 import { AUTH_URL } from "../component/utils/config";
+import { getDictionary } from "../i18n";
 
 function CallbackComponent() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [isAuth, setAuth] = useStore((state) => [state.isAuth, state.setAuth]);
-  const navigate = useNavigate();
+  const [i18n, setAuth, setToken] = useStore((state) => [state.i18n, state.setAuth, state.setToken]);
   const code = searchParams.get("code");
   const state = searchParams.get("state");
 
-  const handleCallback = () => {
+  const content = getDictionary(i18n as 'jp' | 'en' | 'cn').callback as string;
 
+  const handleCallback = () => {
     fetch(`${API_URL}/api/signin?code=${code}&state=${state}`, {
-      method: "POST",
+      method: "GET",
     })
       .then((res) => {
         if (res.status === 200) {
           return res.json();
         } else {
-          console.log(res.status);
           throw new Error("failed to sign in");
         }
       })
       .then((data) => {
         createSesssion(data);
+        setToken(data.token);
         setAuth(true);
         window.location.href = "/";
       })
@@ -53,7 +54,6 @@ function CallbackComponent() {
         handleCallback();
       }
     } else {
-      console.log(window.location.href);
       throw new Error(window.location.href);
     }
   }, []);
@@ -61,7 +61,7 @@ function CallbackComponent() {
   return (
     <div className={style.callback}>
       <Spin size={15} />
-      <p>登录中...</p>
+      <p>{`${content}...`}</p>
     </div>
   );
 }

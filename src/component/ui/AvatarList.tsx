@@ -14,9 +14,7 @@ type TAvatarList = {
 
 function AvatarList({ ...props }: TAvatarList) {
   const [activeIndex, setActiveIndex] = React.useState<number | null>(null);
-  React.useEffect(() => {
-    console.log(activeIndex);
-  }, [activeIndex])
+
   return (
     <div className={style.avatarList}>
       {new Array(100).fill(0).map((item, index) => (

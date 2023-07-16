@@ -7,8 +7,8 @@ import style from "./Avatar.module.css";
 import { css } from "@emotion/react";
 import { useTheme } from "@mui/material/styles";
 //组件
-import Avatar from "./Avatar";
-import Menu from "./Menu";
+import Avatar from "../ui/Avatar";
+import Menu from "../ui/Menu";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import { useStore, clearSession } from "../../store";
 import axios from "axios";
@@ -30,6 +30,10 @@ type TAvatarSelect = {
    * offset
    */
   offset: { x: number; y: number };
+  /**
+   * i18n content
+   */
+  content: Record<string, string>;
 };
 
 function AvatarSelect({ size = 50, ...props }: TAvatarSelect) {
@@ -40,15 +44,14 @@ function AvatarSelect({ size = 50, ...props }: TAvatarSelect) {
     e.preventDefault();
     setClick(!click);
   };
-  const i18n = useStore((state) => state.i18n);
-  const locale = i18n === import.meta.env.VITE_DEFAULT_LACALE ? "" : `${i18n}/`;
-  const [isAuth, setAuth] = useStore((state) => [state.isAuth, state.setAuth]);
+  const [i18n, reset] = useStore((state) => [
+    state.i18n,
+    state.reset
+  ]);
   const handleElement = (el: string) => {
-    if (el === "Logout") {
-      setAuth(false);
+    if (el === props.content.logout) {
+      reset();
       clearSession();
-      console.log(`TOKEN, ${TOKEN}`)
-      console.log(`URL_HOME, ${URL_HOME}`)
       axios({
         url: `${AuthConfig.serverUrl}/api/logout`,
         method: "POST",
@@ -68,7 +71,7 @@ function AvatarSelect({ size = 50, ...props }: TAvatarSelect) {
           console.log((err as Error).message);
         });
     } else {
-      window.location.href = `/${locale}${el.toLowerCase()}`;
+      window.location.href = `/${i18n}/${getTheKey(el, props.content)}`;
     }
     setClick(false);
   };
@@ -99,8 +102,12 @@ function AvatarSelect({ size = 50, ...props }: TAvatarSelect) {
           handleElement={handleElement}
           content={
             props.isAdmin
-              ? ["Profile", "Account", "Logout"]
-              : ["Profile", "Logout"]
+              ? [
+                  props.content.profile,
+                  props.content.account,
+                  props.content.logout,
+                ]
+              : [props.content.profile, props.content.logout]
           }
           offsetX={props.offset?.x ?? -size / 2}
           offsetY={props.offset?.y ?? 0}
@@ -108,6 +115,14 @@ function AvatarSelect({ size = 50, ...props }: TAvatarSelect) {
       </Avatar>
     </>
   );
+}
+
+function getTheKey(value: string, record: Record<string, string>) {
+  let result = "";
+  for (const key in record) {
+    if (value === record[key]) result = key;
+  }
+  return result;
 }
 
 export default AvatarSelect;

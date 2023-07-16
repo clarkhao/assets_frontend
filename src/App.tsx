@@ -13,7 +13,6 @@ import BackHome from "./component/composite/BackHome";
 const App = () => {
   const mode = useStore((state) => state.themeMode);
   const theme = generateTheme(mode);
-
   const router = createBrowserRouter([
     {
       path: "/",

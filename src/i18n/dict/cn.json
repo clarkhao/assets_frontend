@@ -1,0 +1,48 @@
+{
+  "topbar": {
+    "signin": "登录",
+    "profile": "账户",
+    "account": "管理",
+    "logout": "退出"
+  },
+  "delete": "删除",
+  "callback": "登陆中",
+  "upload": {
+    "title": "上传文件",
+    "droparea": {
+      "limit": "限额",
+      "uploaded": "已上传",
+      "first": "拖拽文件到此处",
+      "second": "或者点击图标上传"
+    },
+    "limit_error": "上传文件超过限额",
+    "format_error": "不支持的上传格式",
+    "size_error": "上传文件不可超过2M",
+    "success_msg": "个文件上传成功"
+  },
+  "profile": {
+    "card": {
+      "name": "名字",
+      "email": "电子邮箱",
+      "limit": "限额"
+    },
+    "button": {
+      "uploaded": "已上传",
+      "likes": "点赞",
+      "liked": "获赞"
+    }
+  },
+  "account": {
+    "avatar": "头像",
+    "email": "电子邮箱",
+    "limit": "上传上限",
+    "name": "用户名",
+    "role": "角色"
+  },
+  "backhome": {
+    "error": "404页面不存在",
+    "reason": "您正在寻找的页面不存在。",
+    "next": "返回首页",
+    "login": "登录"
+  }
+}

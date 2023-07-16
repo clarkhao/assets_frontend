@@ -13,10 +13,6 @@ export type TFileErrMsgType = {
   msg: string[];
 };
 
-export interface Statcis {
-  uploaded: number | null;
-  limit: number | null;
-}
 //i18n data for signup page
 export type JsonValue =
   | string

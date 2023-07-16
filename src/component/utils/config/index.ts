@@ -1,7 +1,7 @@
 export const API_URL =
   import.meta.env.MODE === "development"
     ? import.meta.env.STORYBOOK_API_URL ?? import.meta.env.VITE_DEV_API_URL
-    : import.meta.env.VITE_API_URL;
+    : `${window.location.protocol}//${window.location.host}`;
 
 export const TOKEN =
   import.meta.env.MODE === "development"
