@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
-import Table from '../../component/ui/Table';
+import Table from '../../component/composite/Table';
 
 const meta: Meta<typeof Table> = {
-  title: 'UI/Table',
+  title: 'Composite/Table',
   component: Table,
   tags: ['autodocs'],
   parameters: {

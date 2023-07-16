@@ -46,17 +46,14 @@ function Logo({ size = 40, ...props }: TLogo) {
   }, [rotateEnd]);
   return (
     <div
-      className={style.container}
+      className={[style.container, "icon-logo"].join(" ")}
       css={css`
         --icon-size: ${size}px;
-
-        
       `}
-      
       onClick={props.clickHandler}
     >
       <FiPlusCircle />
-      <h2>IMagePlus</h2>
+      <h2 className="icon-text">IMagePlus</h2>
     </div>
   );
 }

@@ -6,7 +6,7 @@ import { css } from "@emotion/react";
 import { useTheme } from "@mui/material/styles";
 //组件
 import IconButton from "@mui/material/IconButton";
-import {FiHeart} from "react-icons/fi";
+import { FiHeart } from "react-icons/fi";
 //hooks
 import { useStore } from "../../store";
 
@@ -18,7 +18,7 @@ type TFollower = {
   /**
    * value
    */
-  data: {name: string; value: number;}
+  data: { name: string; value: number };
   /**
    * icon
    */
@@ -27,19 +27,36 @@ type TFollower = {
    * click handler
    */
   onClick?: () => void;
+  /**
+   * isColumn?
+   */
+  isColumn?: boolean;
 };
 
-function Follower({ size=100, icon=<FiHeart />, ...props }: TFollower) {
+function Follower({
+  size = 100,
+  icon = <FiHeart />,
+  isColumn = false,
+  ...props
+}: TFollower) {
   const themeMode = useStore((state) => state.themeMode);
   return (
-    <div className={[style.container, `${themeMode}-container`].join(" ")} onClick={props.onClick}>
-        <IconButton>{icon}</IconButton>
-        <div className={style.icon} css={css`
+    <div
+      className={[
+        style.container,
+        `${themeMode}-container`,
+        isColumn ? style.column : "",
+      ].join(" ")}
+      onClick={props.onClick}
+      css={css`
         --follower-icon-size: ${size}px;
-        `}>
-          <div>{props.data?.value}</div>
-          <p>{props.data?.name}</p>
-        </div>
+      `}
+    >
+      <IconButton>{icon}</IconButton>
+      <div className={style.icon}>
+        <div>{props.data?.value}</div>
+        <p>{props.data?.name}</p>
+      </div>
     </div>
   );
 }

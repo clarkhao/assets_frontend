@@ -25,7 +25,7 @@ type THome = {};
 
 function Home({ ...props }: THome) {
   const theme = useTheme();
-  const themeMode = useStore((state) => state.themeMode);
+  const [themeMode, i18n] = useStore((state) => [state.themeMode, state.i18n]);
   const [fetchComplete, setFetchComplete] = React.useState<boolean>(false);
   const [isExiting, setIsExiting] = React.useState<boolean>(false);
   const [timer, setTimer] = React.useState<number>(0);
@@ -47,14 +47,14 @@ function Home({ ...props }: THome) {
             setIsExiting(true);
             setTimer(
               window.setTimeout(() => {
-                window.location.href = "/upload";
+                window.location.href = `/${i18n}/upload`;
               }, 300)
             );
           }}
         />
       </div>
       <LoadingContext.Provider value={{ fetchComplete, setFetchComplete }}>
-        <Arrangement width={300} top={170} />
+        <Arrangement arrageWidth={300} top={170} />
         {!fetchComplete ? <Spin size={10} /> : null}
       </LoadingContext.Provider>
     </div>

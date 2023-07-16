@@ -7,7 +7,7 @@
   gap: calc(var(--spin-size));
   animation: spinner 2s linear infinite;
   position: relative;
-  left: calc(100vw/2);
+  left: calc(100vw/2 - var(--spin-size) * 3/2);
   bottom: 0px;
 }
 .spin {

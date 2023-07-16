@@ -14,15 +14,14 @@ type TPrivate = {
 };
 
 function Private({ ...props }: TPrivate) {
-  const [isAuth, setAuth] = useStore((state) => [state.isAuth, state.setAuth]);
+  const [isAuth, setAuth, token] = useStore((state) => [state.isAuth, state.setAuth, state.token]);
   const user = sessionStorage.getItem("user");
-  const token = sessionStorage.getItem("token");
-  const pulibcToken = sessionStorage.getItem("publicToken");
-  if (!isAuth || !user || !token || !pulibcToken) {
+  
+  if (!isAuth || !user || !token) {
     setAuth(false);
     throw new Error("authenticate failed");
   }
-  return <Fragment>{(isAuth && user && token && pulibcToken) ? props.children : null}</Fragment>;
+  return <Fragment>{(isAuth && user && token) ? props.children : null}</Fragment>;
 }
 
 export default Private;

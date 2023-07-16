@@ -1,5 +1,9 @@
 import React, { Ref } from "react";
-import { LoaderFunction, ActionFunction } from "react-router-dom";
+import {
+  LoaderFunction,
+  ActionFunction,
+  createBrowserRouter,
+} from "react-router-dom";
 
 interface IRoute {
   path: string;
@@ -22,16 +26,15 @@ for (const path of Object.keys(pages)) {
   const normalizedPathName = fileName.includes("$")
     ? fileName.replace("$", ":")
     : fileName.replace(/\/index/, "");
-    
+
   locales.forEach((el) => {
-    const locale = el === import.meta.env.VITE_DEFAULT_LACALE ? "" : el;
     routes.push({
       path:
-        fileName === "index" && el === import.meta.env.VITE_DEFAULT_LACALE
-          ? "/"
-          : fileName === "index" && el !== import.meta.env.VITE_DEFAULT_LACALE
-          ? locale
-          : `${locale}/${normalizedPathName.toLowerCase()}`,
+        fileName === "index"
+          ? `/${el}`
+          : fileName === "Callback"
+          ? `/callback`
+          : `/${el}/${normalizedPathName.toLowerCase()}`,
       // @ts-ignore
       Element: pages[path].default,
       // @ts-ignore

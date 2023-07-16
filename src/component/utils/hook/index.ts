@@ -7,13 +7,12 @@ import React from "react";
  * 2, 上传到aws，F->重试，S->继续
  * 3, 写数据到db，F->后端协调，S->finish
  */
-import { TFileListType, TFileErrMsgType, Statcis } from "../type";
+import { TFileListType, TFileErrMsgType } from "../type";
 type UploadState = {
   fileList: Array<TFileListType> | null;
   fileNameMap: Record<string, string> | null;
   presigned: Array<string>;
   start: boolean | null;
-  statics: Statcis;
   error: TFileErrMsgType | null;
   toastId: number;
 };
@@ -29,7 +28,6 @@ type UploadPayload = {
   "upload-progress": { index: number; progress: number };
   "complete-aws": { index: number; status: boolean };
   "delete-file": { index: number };
-  "set-statics": { data: Statcis };
   "set-db": { status: boolean };
 
   "change-error": UploadState["error"];
@@ -61,15 +59,15 @@ export const uploadReducer = (state: UploadState, action: IUploadAction) => {
         start: null,
         statics: {
           uploaded:
-            sessionStorage.getItem("statics") === null
+            sessionStorage.getItem("user") === null
               ? 0
               : parseInt(
-                  JSON.parse(sessionStorage.getItem("statics")!).uploaded
+                  JSON.parse(sessionStorage.getItem("user")!).uploaded
                 ),
           limit:
-            sessionStorage.getItem("statics") === null
+            sessionStorage.getItem("user") === null
               ? 0
-              : parseInt(JSON.parse(sessionStorage.getItem("statics")!).limit),
+              : parseInt(JSON.parse(sessionStorage.getItem("user")!).limit),
         },
 
       };
@@ -137,11 +135,6 @@ export const uploadReducer = (state: UploadState, action: IUploadAction) => {
           );
         }) as Array<string>,
       };
-    case "set-statics":
-      return {
-        ...state,
-        statics: (action.payload as UploadPayload["set-statics"])["data"],
-      };
     case "set-db":
       return {
         ...state,
@@ -173,16 +166,6 @@ export const initialUploadState: UploadState = {
   fileNameMap: {},
   presigned: [],
   start: null,
-  statics: {
-    uploaded:
-      sessionStorage.getItem("statics") === null
-        ? 0
-        : parseInt(JSON.parse(sessionStorage.getItem("statics")!).uploaded),
-    limit:
-      sessionStorage.getItem("statics") === null
-        ? 0
-        : parseInt(JSON.parse(sessionStorage.getItem("statics")!).limit),
-  },
   error: { name: "", msg: [] },
   toastId: 0,
 };

@@ -17,11 +17,14 @@ import ButtonGroup from "@mui/material/ButtonGroup";
 import Spin from "../ui/Spin";
 import { LoadingContext } from "../../pages/index";
 import { FiTrash2 } from "react-icons/fi";
+import { TPostCardData } from "../ui/PostCard";
+import { getDictionary } from "../../i18n";
+import { useStore } from "../../store";
+//hooks
+import { useMediaQuery } from "react-responsive";
 
 export interface IProfile {
   data: TEventData;
-  ids: Array<string>;
-  setIds: React.Dispatch<React.SetStateAction<string[]>>;
   from: string;
 }
 //PostCard, Arrangement
@@ -50,22 +53,63 @@ function ProfileComponent({ ...props }: TProfile) {
         ? 0
         : parseInt(JSON.parse(sessionStorage.getItem("file-data")!).liked),
   });
-  //indicate which tab, upload or like
-  const [toggle, setToggle] = React.useState(true);
-  const [ids, setIds] = React.useState<Array<string>>([]);
+
   const [fetchComplete, setFetchComplete] = React.useState<boolean>(false);
+  const [deleted, setDeleted] = React.useState<boolean>(false);
 
   const user = sessionStorage.getItem("user");
+  const [
+    i18n,
+    token,
+    statics,
+    setStatics,
+    deletingIds,
+    setDeletingIds,
+    tab,
+    toggleTab,
+  ] = useStore((state) => [
+    state.i18n,
+    state.token,
+    state.statics,
+    state.setStatics,
+    state.deletingIds,
+    state.setDeletingIds,
+    state.tab,
+    state.toggleTab,
+  ]);
 
   const avatar = user ? JSON.parse(user).avatar : "/avatar.svg";
   const name = user ? JSON.parse(user).name : "";
   const email = user ? JSON.parse(user).email : "";
-  const limit = user ? JSON.parse(user).limit : 5;
-  const userId = user ? `publicUser:${JSON.parse(user).publicUser}` : "";
-  const [token, _] = React.useState<string | null>(
-    sessionStorage.getItem("token")
-  );
+  const limit = statics.limit;
+  const userId = user ? `publicUser:${JSON.parse(user).id}` : "";
 
+  const content = getDictionary(i18n as "jp" | "en" | "cn").profile as Record<
+    string,
+    any
+  >;
+
+  const isDesktop = useMediaQuery({ minWidth: 1224 });
+
+  const isTablet = useMediaQuery({ maxWidth: 1224, minWidth: 480 });
+
+  const isMobile = useMediaQuery({ maxWidth: 480 });
+  const getStyle = () => {
+    switch (true) {
+      case isDesktop:
+        return { follow: 100, avatar: { iconSize: 150, fontSize: 18 } };
+      case isTablet:
+        return { follow: 60, avatar: { iconSize: 100, fontSize: 16 } };
+      case isMobile:
+        return { follow: 30, avatar: { iconSize: 60, fontSize: 12 } };
+      default:
+        return { follow: 30, avatar: { iconSize: 100, fontSize: 16 } };
+    }
+  };
+  const size = getStyle() as {
+    follow: number;
+    avatar: { iconSize: number; fontSize: number };
+  };
   React.useEffect(() => {
     axios({
       url: `${API_URL}/api/likes/${userId}`,
@@ -80,7 +124,15 @@ function ProfileComponent({ ...props }: TProfile) {
             liked: res.data.liked,
           }));
         });
-        sessionStorage.setItem("file-data", JSON.stringify(res.data));
+        setStatics({ limit: res.data.limit, uploaded: res.data.uploaded });
+        sessionStorage.setItem(
+          "file-data",
+          JSON.stringify({
+            uploaded: res.data.uploaded,
+            likes: res.data.likes,
+            liked: res.data.liked,
+          })
+        );
       })
       .catch((error) => {
         console.log(error);
@@ -100,6 +152,7 @@ function ProfileComponent({ ...props }: TProfile) {
           liked: likeEvent.liked,
         }));
       });
+      setStatics({ limit: statics.limit, uploaded: likeEvent.uploaded });
       sessionStorage.setItem("file-data", JSON.stringify(likeEvent));
     };
     sse.onerror = (error) => {
@@ -107,50 +160,54 @@ function ProfileComponent({ ...props }: TProfile) {
     };
     return () => {
       sse.close();
-      setIds([]);
     };
   }, []);
 
   return (
     <div className={style.profileCard}>
       <div className={style.top}>
-        <ProfileCard userinfo={{ avatar, name, email, limit }} />
+        <ProfileCard
+          userinfo={{ avatar, name, email, limit }}
+          content={content.card}
+          size={size.avatar}
+        />
         <div className={style.followers}>
           <Follower
-            size={100}
+            size={size.follow}
             icon={<FiUploadCloud />}
-            data={{ name: "上传", value: data.uploaded }}
+            data={{ name: content.button.uploaded, value: data.uploaded }}
             onClick={() =>
               startTransition(() => {
-                setToggle(true);
+                toggleTab(true);
                 setFetchComplete(false);
               })
             }
+            isColumn={isTablet || isMobile}
           />
           <Follower
-            size={100}
+            size={size.follow}
             icon={<FiHeart />}
-            data={{ name: "点赞", value: data.likes }}
+            data={{ name: content.button.likes, value: data.likes }}
             onClick={() =>
               startTransition(() => {
-                setToggle(false);
+                toggleTab(false);
                 setFetchComplete(false);
               })
             }
+            isColumn={isTablet || isMobile}
           />
           <Follower
-            size={100}
+            size={size.follow}
             icon={<FiHeart />}
-            data={{ name: "获赞", value: data.liked }}
+            data={{ name: content.button.liked, value: data.liked }}
+            isColumn={isTablet || isMobile}
           />
         </div>
       </div>
       <ProfileContext.Provider
         value={{
           data,
-          ids: ids,
-          setIds: setIds,
-          from: `profile-${toggle ? "own" : "like"}`,
+          from: `profile-${tab ? "own" : "like"}`,
         }}
       >
         <div className={style.main}>
@@ -161,36 +218,36 @@ function ProfileComponent({ ...props }: TProfile) {
                 onClick={() =>
                   startTransition(() =>
                     startTransition(() => {
-                      setToggle(true);
+                      toggleTab(true);
                       setFetchComplete(false);
                     })
                   )
                 }
               >
-                上传
+                {content.button.uploaded}
               </Button>,
               <Button
                 key={`button_2`}
                 onClick={() =>
                   startTransition(() =>
                     startTransition(() => {
-                      setToggle(false);
+                      toggleTab(false);
                       setFetchComplete(false);
                     })
                   )
                 }
               >
-                点赞
+                {content.button.likes}
               </Button>,
             ]}
           </ButtonGroup>
           <LoadingContext.Provider value={{ fetchComplete, setFetchComplete }}>
-            {toggle ? (
+            {tab ? (
               <Arrangement
-                width={300}
+                arrageWidth={300}
                 top={10}
-                query={(records, current) =>
-                  `select *, (select * from $parent.publicUser) as user, ((select count() from publicUser where ->like->(presignedImage where id=$parent.id) group all) || [{count: 0}]) as like from presignedImage where publicUser='${userId}' and "${current}" < (expiredTime - 2h) order by expiredTime, name limit 16 start ${records};`
+                query={(records) =>
+                  `select *, (select * from $parent.publicUser) as user, ((select count() from publicUser where ->like->(presignedImage where id=$parent.id) group all) || [{count: 0}]) as like, (select count() from like where in=${userId} and out=$parent.id) as liked from presignedImage where publicUser='${userId}' order by createdTime, name limit 16 start ${records};`
                 }
               />
             ) : (
@@ -198,53 +255,6 @@ function ProfileComponent({ ...props }: TProfile) {
             )}
             {!fetchComplete ? <Spin size={10} /> : null}
           </LoadingContext.Provider>
-          {ids.length > 0 && toggle ? (
-            <Button
-              variant="contained"
-              color="error"
-              className={style.delete}
-              startIcon={<FiTrash2 />}
-              onClick={() => {
-                console.log("start to delete images");
-                axios({
-                  url: `${API_URL}/api/files`,
-                  method: "DELETE",
-                  data: {
-                    "files": ids,
-                  },
-                  headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                    Accept: "application/json",
-                  },
-                })
-                  .then((res) => {
-                    console.log(res.status);
-                    if (res.status === 200) {
-                      const limit = parseInt(
-                        JSON.parse(sessionStorage.getItem("statics")!).limit
-                      );
-                      const uploaded = parseInt(
-                        JSON.parse(sessionStorage.getItem("statics")!).uploaded
-                      );
-                      sessionStorage.setItem(
-                        "statics",
-                        JSON.stringify({
-                          limit,
-                          uploaded: uploaded - ids.length,
-                        })
-                      );
-                      setData({...data, uploaded});
-                      //files in Arrangement and cache
-                    }
-                  })
-                  .catch((err) => console.log(err))
-                  .finally(() => setIds([]));
-              }}
-            >
-              Delete
-            </Button>
-          ) : null}
         </div>
       </ProfileContext.Provider>
     </div>
@@ -267,10 +277,10 @@ function LaterArrangement({ userId }: { userId: string }) {
     <Fragment>
       {mounted ? (
         <Arrangement
-          width={300}
+          arrageWidth={300}
           top={10}
-          query={(records, current) =>
-            `select *, (select * from $parent.publicUser) as user, ((select count() from publicUser where ->like->(presignedImage where id=$parent.id) group all) || [{count: 0}]) as like from fn::liking_images(${userId}) where "${current}" < (expiredTime - 2h) order by expiredTime, name limit 16 start ${records};`
+          query={(records) =>
+            `select *, (select * from $parent.publicUser) as user, ((select count() from publicUser where ->like->(presignedImage where id=$parent.id) group all) || [{count: 0}]) as like from fn::liking_images(${userId}) order by createdTime, name limit 16 start ${records};`
           }
         />
       ) : null}

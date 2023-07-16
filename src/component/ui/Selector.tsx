@@ -27,9 +27,9 @@ function Selector({ size = 50, ...props }: TSelect) {
   const changeI18n = useStore((state) => state.changeI18n);
   const i18n = useStore((state) => state.i18n);
   const navigate =
-    import.meta.env.MODE === "development" ? null : useNavigate();
+    import.meta.env.MODE === "development" ? useNavigate() : useNavigate();
   const location =
-    import.meta.env.MODE === "development" ? null : useLocation();
+    import.meta.env.MODE === "development" ? useLocation() : useLocation();
   const locales = ["en", "cn", "jp"];
   const [inProp, setInProp] = React.useState(false);
 
@@ -38,15 +38,18 @@ function Selector({ size = 50, ...props }: TSelect) {
     setInProp(!inProp);
   };
   const handleElement = (v: string) => {
-    const pathName =
-      i18n === import.meta.env.VITE_DEFAULT_LACALE
-        ? location?.pathname
-        : location?.pathname.replace(`/${i18n}`, "");
-    const locale = v === import.meta.env.VITE_DEFAULT_LACALE ? "" : `/${v}`;
-    const path = `${locale}${pathName}`;
-    console.log(path);
-    if (import.meta.env.MODE !== "development")
-      (navigate as NavigateFunction)(path);
+    //前一个路径
+    if (
+      location.pathname === "/" ||
+      ["/en", "/cn", "/jp"].some((el) => el === location.pathname)
+    ) {
+      const path = `/${v}`;
+      window.location.href = path;
+    } else {
+      const path = `/${v}${location.pathname.slice(3,)}`;
+      window.location.href = path;
+    }
+
     changeI18n(v);
     setInProp(false);
   };

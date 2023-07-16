@@ -9,7 +9,7 @@ import style from "./Table.module.css";
 import { css } from "@emotion/react";
 import { useTheme } from "@mui/material/styles";
 //组件
-import Avatar from "./Avatar";
+import Avatar from "../ui/Avatar";
 import {
   createColumnHelper,
   flexRender,
@@ -21,6 +21,7 @@ import {
   getPaginationRowModel,
 } from "@tanstack/react-table";
 import TablePagination from "@mui/material/TablePagination";
+import { getDictionary } from "../../i18n";
 
 interface TableMeta<TUser> {
   updateData: (rowIndex: number, columnId: string, value: string) => void;
@@ -154,27 +155,21 @@ const EditAction = ({
 };
 
 type TUser = {
-  app: string;
-  avatar: string;
-  createdTime: string;
-  email: string;
   id: string;
-  limit: number;
   name: string;
-  owner: string;
-  publicUser: string;
+  avatar: string;
+  email: string;
+  limit: number;
+  uploaded: number;
   role: Array<string>;
 };
 const initUser = {
-  app: "",
   avatar: "",
-  createdTime: "",
   email: "",
   id: "",
   limit: 0,
+  uploaded: 0,
   name: "",
-  owner: "",
-  publicUser: "",
   role: [],
 };
 type User = {
@@ -182,45 +177,7 @@ type User = {
   limit: number;
   role: Array<string>;
 };
-const columnHelper = createColumnHelper<TUser>();
-const columns = [
-  columnHelper.accessor("avatar", {
-    header: "头像",
-    cell: (info) => (
-      <Avatar
-        size={50}
-        iconUrl={info.getValue()}
-        handleClick={() => console.log(info)}
-      />
-    ),
-  }),
-  columnHelper.accessor("email", {
-    header: "邮箱",
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor("limit", {
-    header: "上传上限",
-    cell: EditableCell,
-    meta: {
-      type: "number",
-    },
-  }),
-  columnHelper.accessor("name", {
-    header: "用户名",
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor("role", {
-    header: "角色",
-    cell: EditableCell,
-    meta: {
-      type: "checkbox",
-    },
-  }),
-  columnHelper.display({
-    id: "edit",
-    cell: EditAction,
-  }),
-];
+
 type TTable = {};
 
 function Table({ ...props }: TTable) {
@@ -229,11 +186,49 @@ function Table({ ...props }: TTable) {
   );
   const [originalData, setOriginalData] = React.useState<Array<TUser>>(data);
   const [selectedRow, setSelectedRow] = React.useState({});
-  const [token, _] = React.useState<string | null>(
-    sessionStorage.getItem("token")
-  );
+  
   const userCache = sessionStorage.getItem("user");
-  const themeMode = useStore((state) => state.themeMode);
+  const [themeMode, i18n, token] = useStore((state) => [state.themeMode, state.i18n, state.token]);
+  const account = getDictionary(i18n as 'jp' | 'en' | 'cn').account as Record<string, any>;
+  const columnHelper = createColumnHelper<TUser>();
+  const columns = [
+    columnHelper.accessor("avatar", {
+      header: account.avatar,
+      cell: (info) => (
+        <Avatar
+          size={50}
+          iconUrl={info.getValue()}
+          handleClick={() => console.log(info)}
+        />
+      ),
+    }),
+    columnHelper.accessor("email", {
+      header: account.email,
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor("limit", {
+      header: account.limit,
+      cell: EditableCell,
+      meta: {
+        type: "number",
+      },
+    }),
+    columnHelper.accessor("name", {
+      header: account.name,
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor("role", {
+      header: account.role,
+      cell: EditableCell,
+      meta: {
+        type: "checkbox",
+      },
+    }),
+    columnHelper.display({
+      id: "edit",
+      cell: EditAction,
+    }),
+  ];
   const table = useReactTable({
     data,
     columns,
@@ -270,10 +265,15 @@ function Table({ ...props }: TTable) {
               },
             })
               .then((res) => {
-                if(res.status < 400) {
-                  const cacheUserId = (JSON.parse(userCache!) as TUser).publicUser
-                  if(user.id.split(":")[1]  === cacheUserId) {
-                    const newCache = {...(res.data as Omit<TUser, "id">), publicUser: cacheUserId};
+                if (res.status < 400) {
+                  const cachedUser = JSON.parse(userCache!) as Omit<TUser, 'limit' | 'uploaded'>;
+                  const newUser = res.data as Omit<TUser, "id">;
+                  if (user.id.split(":")[1] === cachedUser.id) {
+                    const newCache = {
+                      ...cachedUser,
+                      limit: newUser.limit,
+                      role: newUser.role
+                    };
                     sessionStorage.setItem("user", JSON.stringify(newCache));
                   }
                 }
@@ -282,9 +282,7 @@ function Table({ ...props }: TTable) {
               .then((data) => {
                 setData((old) =>
                   old.map((row, index) => {
-                    return index === rowIndex
-                      ? { ...data, id: `user:${data.publicUser.split(":")[1]}` }
-                      : row;
+                    return index === rowIndex ? { ...row, ...data } : row;
                   })
                 );
               })
@@ -340,7 +338,7 @@ function Table({ ...props }: TTable) {
       await db.use({ ns: "test", db: "test" });
       const query = (
         await db.query(`
-        select * from user order by publicUser limit 6;
+        select * from publicUser order by limit limit 6;
       `)
       )[0].result as Array<TUser>;
       setData(query);

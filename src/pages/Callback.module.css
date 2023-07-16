@@ -8,8 +8,7 @@
 }
 .callback p {
   position: relative;
-  left: 0; right: 0;
-  margin-left: auto;
-  margin-right: auto;
+  margin-left: calc(100vw/2 - 90px);
   top: 50px;
+
 }

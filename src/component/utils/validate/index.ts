@@ -12,11 +12,10 @@
  export const fileSchema = z.object({
      type: z.enum(ALLOWED_FILE_TYPES),
      name: z.enum(ALLOWED_FILE_EXTENSIONS),
-     size: z.number().lt(MAX_FILE_SIZE, {message: '上传文件不可超过2M'}), 
+     size: z.number().lt(MAX_FILE_SIZE), 
  })
  
  export const modifyAndValidate = (file: File) => {
      const modified = new File([file], '.'.concat(file.name.split('.').reverse()[0]), {type: file.type});
-     console.log(modified);
      return fileSchema.safeParse(modified);
  }

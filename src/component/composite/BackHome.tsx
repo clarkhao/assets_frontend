@@ -9,6 +9,7 @@ import { Button } from "@mui/material";
 //组件
 //hooks
 import { useStore } from "../../store";
+import { getDictionary } from "../../i18n";
 
 interface IBackHome {
   /**
@@ -30,15 +31,19 @@ function BackHome({
   reason = "The page you are looking for does not exist.",
   ...props
 }: IBackHome) {
-  const themeMode = useStore((state) => state.themeMode);
+  const [themeMode, i18n] = useStore((state) => [state.themeMode, state.i18n]);
+  const content = getDictionary(i18n as "jp" | "en" | "cn").backhome as Record<
+    string,
+    any
+  >;
   const handleClick = () => {
     const url = sdk.getSigninUrl();
     window.location.href = url;
   };
   return (
     <div className={[style.backhome, `${themeMode}-container`].join(" ")}>
-      <h1>{error}</h1>
-      <p>{reason}</p>
+      <h1>{content.error}</h1>
+      <p>{content.reason}</p>
       <div className={style.buttons}>
         <Button
           variant="contained"
@@ -47,7 +52,7 @@ function BackHome({
             window.location.href = "/";
           }}
         >
-          Back to Home
+          {content.next}
         </Button>
         {props.isLogin && (
           <Button
@@ -56,7 +61,7 @@ function BackHome({
             style={{ width: "160px" }}
             onClick={handleClick}
           >
-            Login
+            {content.login}
           </Button>
         )}
       </div>

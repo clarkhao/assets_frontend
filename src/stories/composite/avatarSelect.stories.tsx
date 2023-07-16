@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { getByRole, userEvent, within } from "@storybook/testing-library";
-import AvatarSelect from "../../component/ui/AvatarSelect";
+import AvatarSelect from "../../component/composite/AvatarSelect";
 
 const meta: Meta<typeof AvatarSelect> = {
-  title: "UI/AvatarSelect",
+  title: "Composite/AvatarSelect",
   component: AvatarSelect,
   tags: ["autodocs"],
   parameters: {

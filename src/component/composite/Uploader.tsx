@@ -26,6 +26,8 @@ import List from "../ui/ListUI";
 import { useUploader, UploadContext } from "../utils/hook";
 //types
 import { TPresignedUploadUrl } from "../utils/type";
+import { useStore } from "../../store";
+import { getDictionary } from "../../i18n";
 
 type TUpload = {};
 
@@ -46,10 +48,17 @@ function Uploader({ ...props }: TUpload) {
   const theme = useTheme();
   const { state, dispatch } = useUploader();
   const [data, setData] = React.useState<FileList | File[]>([]);
+  const [token, statics, setStatics, i18n] = useStore((state) => [
+    state.token,
+    state.statics,
+    state.setStatics,
+    state.i18n
+  ]);
 
-  const [token, _] = React.useState<string | null>(
-    sessionStorage.getItem("token")
-  );
+  const content = getDictionary(i18n as "jp" | "en" | "cn").upload as Record<
+    string,
+    any
+  >;
 
   const handleUploadFile = (
     files: TFileListType[],
@@ -61,9 +70,6 @@ function Uploader({ ...props }: TUpload) {
       headers: { "Content-Type": files[i].file.type },
       //withCredentials: true,
       onUploadProgress: (e: AxiosProgressEvent) => {
-        console.log(`progress.loaded: ${e.loaded}`);
-        console.log(`state.fileList: ${state.fileList}`);
-        console.log(`state.fileNameMap: ${state.fileNameMap}`);
         dispatch({
           type: "upload-progress",
           payload: {
@@ -76,14 +82,14 @@ function Uploader({ ...props }: TUpload) {
   };
   const handleDbRecord = (filenames: Array<string>) => {
     return axios({
-      url: `${API_URL}/api/files/upload`,
+      url: `${API_URL}/api/files`,
       method: "POST",
       data: {
         files: filenames,
       },
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        Authorization: `Bearer ${token}`,
       },
     });
   };
@@ -95,40 +101,15 @@ function Uploader({ ...props }: TUpload) {
   };
 
   React.useEffect(() => {
-    if (token !== null) {
-      axios({
-        method: "get",
-        url: `${API_URL}/api/files/uploaded`,
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      })
-        .then((res) => {
-          console.log("set session");
-          sessionStorage.setItem("statics", JSON.stringify(res.data));
-          dispatch({
-            type: "set-statics",
-            payload: { data: res.data as Statcis },
-          });
-        })
-        .catch((err) => console.log(err));
-    }
-  }, [token]);
-
-  React.useEffect(() => {
     if (state.start) {
-      console.log(state.fileList);
       parallelUpload(state.fileList as TFileListType[]);
     } else {
-      console.log(state.start);
-      const limit = state.statics.limit!;
-      const uploaded = state.statics.uploaded!;
+      const limit = statics.limit;
+      const uploaded = statics.uploaded;
       if (data.length > limit - uploaded) {
         dispatch({
           type: "change-error",
-          payload: { name: "out of limit", msg: ["上传文件超过限额"] },
+          payload: { name: "out of limit", msg: [content.limit_error] },
         });
         setData([]);
         dispatch({ type: "reset-all", payload: null });
@@ -143,7 +124,6 @@ function Uploader({ ...props }: TUpload) {
           if (validated.success) {
             const randomStr = randomString(8);
             const id = `${randomStr}.${file.name.split(".").reverse()[0]}`;
-            console.log(id);
             files.push({
               id,
               file,
@@ -158,10 +138,10 @@ function Uploader({ ...props }: TUpload) {
             let msg: string[] = [];
             for (const e of validated.error.issues) {
               if (e.code === "invalid_enum_value") {
-                if (msg.indexOf("不支持的上传格式") < 0)
-                  msg.push("不支持的上传格式");
+                if (msg.indexOf(content.format_error) < 0)
+                  msg.push(content.format_error);
               } else {
-                msg.push(e.message);
+                msg.push(content.size_error);
               }
             }
             dispatch({
@@ -170,7 +150,6 @@ function Uploader({ ...props }: TUpload) {
             });
           }
         }
-        console.log(files);
         if (files.length > 0) {
           //start
           dispatch({ type: "init-upload", payload: { files, names } });
@@ -184,7 +163,6 @@ function Uploader({ ...props }: TUpload) {
       state.error?.msg.forEach((e, i, a) => {
         if (a.length - 1 === i) {
           const id = toast.error(e);
-          console.log(`toastId: ${id}`);
           dispatch({ type: "toast-id", payload: id as number });
         } else {
           toast.error(e);
@@ -194,18 +172,15 @@ function Uploader({ ...props }: TUpload) {
   }, [state.error]);
 
   const parallelUpload = async (files: TFileListType[]) => {
-    const url = `${API_URL}/api/files/upload/${files
-      .map((f) => f.id)
-      .join(",")}`;
+    const url = `${API_URL}/api/files/${files.map((f) => f.id).join(",")}`;
     const presignedUrls = await fetch(url, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        Authorization: `Bearer ${token}`,
       },
     })
       .then((response) => {
-        console.log(response.status);
         return response.json() as Promise<
           Array<TPresignedUploadUrl> | { code: number; message: string }
         >;
@@ -221,11 +196,10 @@ function Uploader({ ...props }: TUpload) {
           dispatch({ type: "reset-all", payload: null });
         }
       });
-    console.log(presignedUrls);
     if ((presignedUrls as { code: number; message: string }).code >= 400) {
       dispatch({
         type: "change-error",
-        payload: { name: "out of limit", msg: ["上传文件超过限额"] },
+        payload: { name: "out of limit", msg: [content.limit_error] },
       });
       setData([]);
       dispatch({ type: "reset-all", payload: null });
@@ -276,23 +250,11 @@ function Uploader({ ...props }: TUpload) {
           );
           if (dbRes[0].status === 200 && dbRes[0].data === count) {
             dispatch({ type: "set-db", payload: { status: true } });
-            console.log("上传和记载成功");
           }
-          toast.success(`${count}个文件上传成功`);
-          const uploaded = parseInt(
-            JSON.parse(sessionStorage.getItem("statics")!).uploaded
-          );
-          const limit = parseInt(
-            JSON.parse(sessionStorage.getItem("statics")!).limit
-          );
-          sessionStorage.setItem(
-            "statics",
-            JSON.stringify({ uploaded: uploaded + count, limit })
-          );
-          dispatch({
-            type: "set-statics",
-            payload: { data: { uploaded: uploaded + count, limit } },
-          });
+          toast.success(`${count}${content.success_msg}`);
+          const limit = statics.limit;
+          const uploaded = statics.uploaded;
+          setStatics({ uploaded: uploaded + count, limit });
           setData([]);
         });
       }
@@ -316,9 +278,9 @@ function Uploader({ ...props }: TUpload) {
           `}
         >
           <div className={style.title}>
-            <h2>Upload Your Files</h2>
+            <h2>{content.title}</h2>
           </div>
-          <DropZone handleAddFiles={addFiles} statics={state.statics} />
+          <DropZone handleAddFiles={addFiles} statics={statics} i18n={content.droparea}/>
           {state.fileList !== null &&
           state.fileNameMap !== null &&
           state.start ? (

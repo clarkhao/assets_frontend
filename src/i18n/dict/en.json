@@ -1,0 +1,48 @@
+{
+  "topbar": {
+    "signin": "Signin",
+    "profile": "Profile",
+    "account": "Account",
+    "logout": "Logout"
+  },
+  "delete": "Delete",
+  "callback": "Logging in",
+  "upload": {
+    "title": "Upload Your Files",
+    "droparea": {
+      "limit": "Limit",
+      "uploaded": "Uploaded",
+      "first": "Drag and drop files here",
+      "second": "or click the icon to upload"
+    },
+    "limit_error": "Uploaded file exceeds limit",
+    "format_error": "Unsupported upload format",
+    "size_error": "The uploaded file cannot exceed 2MB.",
+    "success_msg": "file(s) uploaded successfully"
+  },
+  "profile": {
+    "card": {
+      "name": "Name",
+      "email": "Email",
+      "limit": "Limit"
+    },
+    "button": {
+      "uploaded": "Uploaded",
+      "likes": "Likes",
+      "liked": "Liked"
+    }
+  },
+  "account": {
+    "avatar": "Avatar",
+    "email": "Email",
+    "limit": "Upload Limit",
+    "name": "Username",
+    "role": "Role"
+  },
+  "backhome": {
+    "error": "404 - Page Not Found",
+    "reason": "The page you are looking for does not exist.",
+    "next": "Back to Home",
+    "login": "Login"
+  }
+}

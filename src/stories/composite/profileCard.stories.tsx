@@ -21,6 +21,11 @@ export const Primary: Story = {
       name: "John Doe",
       email: "XXXXXXXXXXXXXXXXXXXX",
       limit: 5
+    },
+    content: {
+      name: "Name",
+      email: "Email",
+      limit: "Limit"
     }
   },
   play: async ({ canvasElement }) => {

@@ -1,0 +1,18 @@
+@media screen and (max-width: 480px) {
+  .icon-text {
+    font-size: 20px;
+  }
+  .icon-logo svg {
+    width: 30px;
+  }
+  .topbar-right {
+    column-gap: 5px;
+    margin-right: 10px;
+  }
+  .topbar-logo {
+    margin-left: 10px;
+  }
+  .arrangement {
+    width: 335px;
+  }
+}

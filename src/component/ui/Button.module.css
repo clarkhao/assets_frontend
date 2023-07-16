@@ -20,7 +20,7 @@
 .button:hover {
   width: 160px;
 }
-.button:hover::after {
+.cnbutton:hover::after {
   content: "";
   font-size: 20px;
   margin-left: 10px;
@@ -43,4 +43,55 @@
     content: "添加图片";
   }
 }
-
+.enbutton:hover::after {
+  content: "";
+  font-size: 20px;
+  margin-left: 10px;
+  animation: encontent .1s ease-in-out forwards;
+}
+@keyframes encontent {
+  0% {
+    content: "";
+  }
+  25% {
+    content: "Ad";
+  }
+  50% {
+    content: "Add I";
+  }
+  75% {
+    content: "Add Ima";
+  }
+  100% {
+    content: "Add Image";
+  }
+}
+.enbutton:hover {
+  width: 180px;
+}
+.jpbutton:hover::after {
+  content: "";
+  font-size: 20px;
+  margin-left: 10px;
+  animation: jpcontent .1s ease-in-out forwards;
+}
+@keyframes jpcontent {
+  0% {
+    content: "";
+  }
+  25% {
+    content: "画";
+  }
+  50% {
+    content: "画像を";
+  }
+  75% {
+    content: "画像を追";
+  }
+  100% {
+    content: "画像を追加する";
+  }
+}
+.jpbutton:hover {
+  width: 220px;
+}

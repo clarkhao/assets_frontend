@@ -4,8 +4,9 @@ import { useStore, clearSession } from "../../store";
 //style
 import style from "./TopBar.module.css";
 //组件
-import AvatarSelect from "../ui/AvatarSelect";
+import AvatarSelect from "../composite/AvatarSelect";
 import Button from "@mui/material/Button";
+import { getDictionary } from "../../i18n";
 
 type TTopBar = {
   /**
@@ -34,11 +35,13 @@ function TopBar({ ...props }: TTopBar) {
   const user = sessionStorage.getItem("user");
   const iconUrl = user ? JSON.parse(user).avatar : "/avatar.svg";
   const roles = user ? JSON.parse(user).role as Array<string>: [];
-
+  const [i18n] = useStore((state) => [state.i18n]);
+  
+  const topbar = getDictionary(i18n as 'jp' | 'en' | 'cn').topbar as Record<string, string>;
   return (
     <div className={style.container}>
-      <div className={style.logo}>{props.left}</div>
-      <div className={style.right}>
+      <div className={[style.logo, "topbar-logo"].join(" ")}>{props.left}</div>
+      <div className={[style.right, "topbar-right"].join(" ")}>
         {props.rightOne}
         {props.rightTwo}
         {props.isAuth ? (
@@ -46,10 +49,11 @@ function TopBar({ ...props }: TTopBar) {
             size={40}
             iconUrl={iconUrl}
             isAdmin={roles.some(el => el === "admin" || el === "root")}
-            offset={{ x: -20, y: 21 }}
+            offset={{ x: -40, y: 21 }}
+            content={topbar}
           />
         ) : (
-          <Button onClick={props.handleClick}>Sign in</Button>
+          <Button onClick={props.handleClick}>{topbar.signin}</Button>
         )}
       </div>
       <div className={style.bar}></div>

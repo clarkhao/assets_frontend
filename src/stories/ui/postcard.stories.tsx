@@ -25,7 +25,8 @@ export const CardLoaded: Story = {
       expiredTime: "",
       url: "https://api.slingacademy.com/public/sample-photos/1.jpeg",
       user: [],
-      like: [{count: 1}]
+      like: [{count: 1}],
+      liked: false
     },
     cancel: true
   },

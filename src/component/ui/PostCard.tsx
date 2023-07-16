@@ -33,7 +33,11 @@ type TSimpleUser = {
 type TLike = {
   like: Array<{ count: number }>;
 };
-export type TPostCardData = TFileMerge & TSimpleUser & TLike;
+export type TPostCardFetch = TFileMerge & TSimpleUser & TLike;
+export type TPostCardFetchWithLiked = TPostCardFetch & {
+  liked: Array<{ count: number }>;
+};
+export type TPostCardData = TPostCardFetch & { liked: boolean };
 type TPostCard = {
   /**
    * size
@@ -56,6 +60,10 @@ type TPostCard = {
 function PostCard({ size = 300, data, cancel = false, ...props }: TPostCard) {
   const [isLoaded, setLoaded] = React.useState(false);
   const profile = React.useContext(ProfileContext);
+  const [deletingIds, setDeletingIds] = useStore((state) => [
+    state.deletingIds,
+    state.setDeletingIds,
+  ]);
 
   return (
     <>
@@ -81,7 +89,6 @@ function PostCard({ size = 300, data, cancel = false, ...props }: TPostCard) {
                 onClick={() => (window.location.href = data?.url)}
                 onError={(e) => {
                   const imageUrl = (e.target as HTMLImageElement).src;
-                  console.log(imageUrl);
                 }}
               />
               {cancel ? (
@@ -91,10 +98,10 @@ function PostCard({ size = 300, data, cancel = false, ...props }: TPostCard) {
                   className={style.checkbox}
                   onChange={(e) => {
                     if (e.target.checked) {
-                      profile?.setIds([...profile?.ids, data?.id]);
+                      setDeletingIds([...deletingIds, data?.id]);
                     } else {
-                      profile?.setIds(
-                        profile?.ids.filter((id) => id !== data?.id)
+                      setDeletingIds(
+                        [...deletingIds].filter((id) => id !== data?.id)
                       );
                     }
                   }}

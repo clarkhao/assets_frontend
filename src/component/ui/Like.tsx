@@ -10,13 +10,17 @@ import { FiHeart } from "react-icons/fi";
 import axios from "axios";
 import ErrorBoundary from "./ErrorBoundary";
 //type
-import type { TPostCardData } from "./PostCard";
+import type { TPostCardFetch, TPostCardData } from "./PostCard";
 
 type TLike = {
   /**
    * likes
    */
   likes: number;
+  /**
+   * liked
+   */
+  liked: boolean;
   /**
    * key
    */
@@ -32,49 +36,10 @@ function LikeComponent({
   fileKey,
   ...props
 }: TLike & { handler: () => void }) {
-  const [initLike, setInitLike] = React.useState(false);
-  const [liked, setLiked] = React.useState(false);
+  const [initLike, setInitLike] = React.useState(props.liked);
+  const [liked, setLiked] = React.useState(props.liked);
   const [timer, setTimer] = React.useState(0);
-  const [savedLike, setSavedLike] = React.useState<boolean>(liked);
-  const [userStr, setUserStr] = React.useState<string | null>(() =>
-    sessionStorage.getItem("user")
-  );
-  React.useEffect(() => {
-    if (
-      props.isAuth &&
-      fileKey !== undefined &&
-      fileKey !== null &&
-      fileKey !== ""
-    ) {
-      if (props.isAuth && userStr !== null) {
-        const user = `publicUser:${JSON.parse(userStr).publicUser}`;
-        console.log("开始");
-        db.authenticate(PUBLIC_TOKEN)
-          .then(async () => {
-            await db.use({ ns: "test", db: "test" });
-            const query = (
-              await db.query(
-                `
-            select count() as count from like where in=${user} and out=${fileKey};
-            `.trim()
-              )
-            )[0].result as Array<{ count: number }>;
-            if (query.length === 0) {
-              setInitLike(false);
-              setLiked(false);
-            } else {
-              setInitLike(true);
-              setLiked(true);
-            }
-          })
-          .catch((err) => {
-            if (err instanceof Error) {
-              console.log(err.message);
-            }
-          });
-      }
-    }
-  }, [props.isAuth]);
+  const [savedLike, setSavedLike] = React.useState<boolean>(props.liked);
 
   React.useEffect(() => {
     if (
@@ -83,9 +48,8 @@ function LikeComponent({
       fileKey !== null &&
       fileKey !== ""
     ) {
-      console.log("改变like");
       const userStr = sessionStorage.getItem("user");
-      const user = `publicUser:${JSON.parse(userStr ?? "{}").publicUser}`;
+      const user = `publicUser:${JSON.parse(userStr ?? "{}").id}`;
       axios({
         url: API_URL + "/api/likes",
         method: savedLike ? "POST" : "DELETE",
@@ -101,7 +65,7 @@ function LikeComponent({
         .then((res) => {
           if (res.status === 200) {
             //cache handle
-            const cache = ["index-file", "profile-own", "profile-like"];
+            const cache = ["index-file"];
             cache
               .map((key) => sessionStorage.getItem(key))
               .map((storage) => {
@@ -110,13 +74,19 @@ function LikeComponent({
                 } else return null;
               })
               .forEach((list, index) => {
+                let changedItem: TPostCardData | null = null;
                 if (list !== null) {
                   const updatedList = list.map((item) => {
                     if (item.id === fileKey) {
                       const count = savedLike
                         ? item.like[0].count + 1
                         : item.like[0].count - 1;
-                      return { ...item, like: [{ count }] };
+                      changedItem = {
+                        ...item,
+                        like: [{ count }],
+                        liked: savedLike,
+                      };
+                      return { ...item, like: [{ count }], liked: savedLike };
                     } else return item;
                   });
                   const updatedStr = JSON.stringify(updatedList);
@@ -138,7 +108,10 @@ function LikeComponent({
   return (
     <Fragment>
       <div
-        className={[style.container, liked && props.isAuth ? style.liked : ""].join(" ")}
+        className={[
+          style.container,
+          liked && props.isAuth ? style.liked : "",
+        ].join(" ")}
         onClick={() => {
           if (!props.isAuth) return;
           clearTimeout(timer);
@@ -177,7 +150,7 @@ function Like({ likes, fileKey, ...props }: TLike) {
             setTimer(
               window.setTimeout(() => {
                 setMounted(true);
-              }, 500)
+              }, 3000)
             );
           }}
         />

@@ -21,26 +21,44 @@ type TProfileCard = {
    * modal
    */
   modal?: React.ReactNode;
+  /**
+   * content i18n
+   */
+  content: Record<string, string>;
+  /**
+   * size
+   */
+  size: { iconSize: number; fontSize: number };
 };
 
-function ProfileCard({ userinfo,...props }: TProfileCard) {
+function ProfileCard({ userinfo, ...props }: TProfileCard) {
   return (
     <div className={style.container}>
-      {<Avatar size={150} id="card-avatar" iconUrl={userinfo?.avatar}/>}
-      <div className={style.main}>
+      {
+        <Avatar
+          size={props.size.iconSize}
+          id="card-avatar"
+          iconUrl={userinfo?.avatar}
+        />
+      }
+      <div
+        className={style.main}
+        css={css`
+          --avatar-font-size: ${props.size.fontSize}px;
+        `}
+      >
         <div className={style.name}>
-          <h3>Name</h3>
+          <p>{props.content.name}</p>
           <p>{userinfo?.name}</p>
         </div>
         <div className={style.email}>
-          <p>Email</p>
+          <p>{props.content.email}</p>
           <p>{userinfo?.email}</p>
         </div>
         <div>
-          <p>Limit: {userinfo?.limit}</p>
+          <p>{`${props.content.limit}: ${userinfo?.limit}`}</p>
         </div>
       </div>
-      
     </div>
   );
 }

@@ -8,7 +8,7 @@ import Private from "../component/layout/Private";
 import ErrorBoundary from "../component/ui/ErrorBoundary";
 //组件
 const Frame = lazy(() => import("../component/layout/Frame"));
-const Table = lazy(() => import("../component/ui/Table"));
+const Table = lazy(() => import("../component/composite/Table"));
 //hooks
 import { useStore } from "../store";
 import Authroize from "../component/layout/Authorize";
